@@ -1,8 +1,6 @@
 import java.awt.*
 import javax.swing.*
-import kotlin.math.PI
-import kotlin.math.atan
-import kotlin.math.sqrt
+import kotlin.math.*
 
 class RotatingFigure : JPanel() {
     private val nodes = arrayOf(
@@ -24,11 +22,11 @@ class RotatingFigure : JPanel() {
         preferredSize = Dimension(640, 640)
         background = Color.white
         scale(100.0)
-        rotateFigure(Math.PI / 3.0, Math.atan(Math.sqrt(2.0)))
-        Timer(17) {
-            rotateFigure(Math.PI / 180.0, 0.0)
-            repaint()
-        }.start()
+        rotateFigure(Math.PI / 3.0, atan(sqrt(2.0)))
+//        Timer(17) {
+//            rotateFigure(Math.PI / 180.0, 0.0)
+//            repaint()
+//        }.start()
     }
 
     private fun scale(s: Double) {
@@ -40,10 +38,10 @@ class RotatingFigure : JPanel() {
     }
 
     private fun rotateFigure(angleX: Double, angleY: Double) {
-        val sinX = Math.sin(angleX)
-        val cosX = Math.cos(angleX)
-        val sinY = Math.sin(angleY)
-        val cosY = Math.cos(angleY)
+        val sinX = sin(angleX)
+        val cosX = cos(angleX)
+        val sinY = sin(angleY)
+        val cosY = cos(angleY)
         for (node in nodes) {
             val x = node.x
             val y = node.y
@@ -58,8 +56,8 @@ class RotatingFigure : JPanel() {
 
     private fun rotateAroundAxis(angle: Double, axisP1: Vector, axisP2: Vector) {
         val axis = axisP2 - axisP1
-        val theta = atan(axis.y/axis.x)
-        val phi = atan(sqrt(axis.x*axis.x+axis.y*axis.y)/axis.z)
+        val theta = atan(axis.y / axis.x)
+        val phi = atan(sqrt(axis.x * axis.x + axis.y * axis.y) / axis.z)
 
         val objectMatrix = Matrix(nodes.size, 4)
         for (i in nodes.indices) {
@@ -70,9 +68,9 @@ class RotatingFigure : JPanel() {
         }
         val preparationTransform = TransformMatrixFabric.translate(-axisP1.x, -axisP1.y, -axis.z) *
                 TransformMatrixFabric.rotateZ(-phi) *
-                TransformMatrixFabric.rotateY(PI/2.0 - theta)
-        val returnTransform = TransformMatrixFabric.rotateY(theta - PI/2)*
-                TransformMatrixFabric.rotateZ(phi)*
+                TransformMatrixFabric.rotateY(PI / 2.0 - theta)
+        val returnTransform = TransformMatrixFabric.rotateY(theta - PI / 2) *
+                TransformMatrixFabric.rotateZ(phi) *
                 TransformMatrixFabric.translate(axisP1.x, axisP1.y, axisP2.z)
         val resultMatrix = objectMatrix * preparationTransform * TransformMatrixFabric.rotateZ(angle) * returnTransform
 
@@ -89,12 +87,12 @@ class RotatingFigure : JPanel() {
             val xy1 = nodes[edge[0]]
             val xy2 = nodes[edge[1]]
             g.drawLine(
-                Math.round(xy1.x).toInt(), Math.round(xy1.y).toInt(),
-                Math.round(xy2.x).toInt(), Math.round(xy2.y).toInt()
+                xy1.x.roundToInt(), xy1.y.roundToInt(),
+                xy2.x.roundToInt(), xy2.y.roundToInt()
             )
         }
         for (node in nodes) {
-            g.fillOval(Math.round(node.x).toInt() - 4, Math.round(node.y).toInt() - 4, 8, 8)
+            g.fillOval(node.x.roundToInt() - 4, node.y.roundToInt() - 4, 8, 8)
             g.color = Color.ORANGE
         }
     }
@@ -106,6 +104,16 @@ class RotatingFigure : JPanel() {
         g.color = Color.blue
         drawFigure(g)
     }
+}
+
+fun showRotationAxis(point1: Vector, point2: Vector, graphics: Graphics) {
+    graphics.drawLine(
+        point1.x.roundToInt(), point1.y.roundToInt(),
+        point2.x.roundToInt(), point2.y.roundToInt()
+    )
+    graphics.fillOval(point1.x.roundToInt() - 4, point1.y.roundToInt() - 4, 8, 8)
+    graphics.fillOval(point2.x.roundToInt() - 4, point2.y.roundToInt() - 4, 8, 8)
+    graphics.color = Color.ORANGE
 }
 
 fun main(args: Array<String>) {
@@ -126,7 +134,6 @@ fun main(args: Array<String>) {
         val rotateButton = JButton("Повернуть")
         val showAxisButton = JButton("Отобразить ось")
 
-
         inputPanel.add(JLabel("X первой точки"))
         inputPanel.add(firstPointX)
         inputPanel.add(JLabel("Y первой точки"))
@@ -145,13 +152,21 @@ fun main(args: Array<String>) {
         inputPanel.add(showAxisButton)
 
         frame.add(inputPanel, BorderLayout.NORTH)
-
         frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         frame.title = "Rotating figure"
         frame.isResizable = true
-        frame.add(RotatingFigure(), BorderLayout.CENTER)
+        val rotatingFigure = RotatingFigure()
+        frame.add(rotatingFigure, BorderLayout.CENTER)
         frame.pack()
         frame.setLocationRelativeTo(null)
         frame.isVisible = true
+
+        showAxisButton.addActionListener {
+            showRotationAxis(
+                Vector(firstPointX.text.toDouble(), firstPointY.text.toDouble(), firstPointZ.text.toDouble()),
+                Vector(secondPointX.text.toDouble(), secondPointY.text.toDouble(), secondPointZ.text.toDouble()),
+                rotatingFigure.graphics
+            )
+        }
     }
 }
