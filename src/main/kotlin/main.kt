@@ -22,7 +22,7 @@ class RotatingFigure : JPanel() {
         preferredSize = Dimension(640, 640)
         background = Color.white
         scale(100.0)
-        rotateFigure(Math.PI / 3.0, atan(sqrt(2.0)))
+//        rotateFigure(Math.PI / 3.0, atan(sqrt(2.0)))
 //        Timer(17) {
 //            rotateFigure(Math.PI / 180.0, 0.0)
 //            repaint()
@@ -54,30 +54,30 @@ class RotatingFigure : JPanel() {
         }
     }
 
-    private fun rotateAroundAxis(angle: Double, axisP1: Vector, axisP2: Vector) {
+    fun rotateAroundAxis(angle: Double, axisP1: Vector, axisP2: Vector) {
         val axis = axisP2 - axisP1
-        val theta = atan(axis.y / axis.x)
-        val phi = atan(sqrt(axis.x * axis.x + axis.y * axis.y) / axis.z)
+        val phi = atan2(axis.y, axis.x)
+        val theta = atan2(sqrt(axis.x * axis.x + axis.y * axis.y), axis.z)
 
         val objectMatrix = Matrix(nodes.size, 4)
         for (i in nodes.indices) {
-            objectMatrix[i, 0] = nodes[i].x
-            objectMatrix[i, 1] = nodes[i].y
-            objectMatrix[i, 2] = nodes[i].z
-            objectMatrix[i, 3] = 1.0
+            objectMatrix[i + 1, 1] = nodes[i].x
+            objectMatrix[i + 1, 2] = nodes[i].y
+            objectMatrix[i + 1, 3] = nodes[i].z
+            objectMatrix[i + 1, 4] = 1.0
         }
-        val preparationTransform = TransformMatrixFabric.translate(-axisP1.x, -axisP1.y, -axis.z) *
+        val preparationTransform = TransformMatrixFabric.translate(-axisP1.x, -axisP1.y, -axisP1.z) *
                 TransformMatrixFabric.rotateZ(-phi) *
-                TransformMatrixFabric.rotateY(PI / 2.0 - theta)
-        val returnTransform = TransformMatrixFabric.rotateY(theta - PI / 2) *
+                TransformMatrixFabric.rotateY(-theta)
+        val returnTransform = TransformMatrixFabric.rotateY(theta) *
                 TransformMatrixFabric.rotateZ(phi) *
-                TransformMatrixFabric.translate(axisP1.x, axisP1.y, axisP2.z)
+                TransformMatrixFabric.translate(axisP1.x, axisP1.y, axisP1.z)
         val resultMatrix = objectMatrix * preparationTransform * TransformMatrixFabric.rotateZ(angle) * returnTransform
 
         for (i in nodes.indices) {
-            nodes[i].x = resultMatrix[i, 0]
-            nodes[i].y = resultMatrix[i, 1]
-            nodes[i].z = resultMatrix[i, 2]
+            nodes[i].x = resultMatrix[i + 1, 1]
+            nodes[i].y = resultMatrix[i + 1, 2]
+            nodes[i].z = resultMatrix[i + 1, 3]
         }
     }
 
@@ -105,14 +105,16 @@ class RotatingFigure : JPanel() {
         drawFigure(g)
     }
 
-    fun showRotationAxis(point1: Vector, point2: Vector, graphics: Graphics) {
+    fun showRotationAxis(point1: Vector, point2: Vector) {
         graphics.color = Color.ORANGE
-        graphics.drawLine(
+        val g = graphics as Graphics2D
+        g.translate(width / 2, height / 2)
+        g.drawLine(
             point1.x.roundToInt(), point1.y.roundToInt(),
             point2.x.roundToInt(), point2.y.roundToInt()
         )
-        graphics.fillOval(point1.x.roundToInt() - 4, point1.y.roundToInt() - 4, 8, 8)
-        graphics.fillOval(point2.x.roundToInt() - 4, point2.y.roundToInt() - 4, 8, 8)
+        g.fillOval(point1.x.roundToInt() - 4, point1.y.roundToInt() - 4, 8, 8)
+        g.fillOval(point2.x.roundToInt() - 4, point2.y.roundToInt() - 4, 8, 8)
     }
 }
 
@@ -164,8 +166,20 @@ fun main(args: Array<String>) {
         showAxisButton.addActionListener {
             rotatingFigure.showRotationAxis(
                 Vector(firstPointX.text.toDouble(), firstPointY.text.toDouble(), firstPointZ.text.toDouble()),
-                Vector(secondPointX.text.toDouble(), secondPointY.text.toDouble(), secondPointZ.text.toDouble()),
-                rotatingFigure.graphics
+                Vector(secondPointX.text.toDouble(), secondPointY.text.toDouble(), secondPointZ.text.toDouble())
+            )
+        }
+
+        rotateButton.addActionListener {
+            rotatingFigure.rotateAroundAxis(
+                angle.text.toDouble() / 180 * PI,
+                Vector(firstPointX.text.toDouble(), firstPointY.text.toDouble(), firstPointZ.text.toDouble()),
+                Vector(secondPointX.text.toDouble(), secondPointY.text.toDouble(), secondPointZ.text.toDouble())
+            )
+            rotatingFigure.repaint()
+            rotatingFigure.showRotationAxis(
+                Vector(firstPointX.text.toDouble(), firstPointY.text.toDouble(), firstPointZ.text.toDouble()),
+                Vector(secondPointX.text.toDouble(), secondPointY.text.toDouble(), secondPointZ.text.toDouble())
             )
         }
     }
