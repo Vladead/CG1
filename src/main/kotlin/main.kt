@@ -18,15 +18,19 @@ class RotatingFigure : JPanel() {
         intArrayOf(3, 1)
     )
 
+    var axisP1 = Vector(0.0, 0.0, 0.0)
+    var axisP2 = Vector(0.0, 0.0, 0.0)
+    private var isAxisVisible = false
+
     init {
         preferredSize = Dimension(640, 640)
         background = Color.white
         scale(100.0)
-//        rotateFigure(Math.PI / 3.0, atan(sqrt(2.0)))
-//        Timer(17) {
+        rotateFigure(Math.PI / 3.0, atan(sqrt(2.0)))
+        Timer(17) {
 //            rotateFigure(Math.PI / 180.0, 0.0)
-//            repaint()
-//        }.start()
+            repaint()
+        }.start()
     }
 
     private fun scale(s: Double) {
@@ -95,6 +99,15 @@ class RotatingFigure : JPanel() {
             g.fillOval(node.x.roundToInt() - 4, node.y.roundToInt() - 4, 8, 8)
             g.color = Color.ORANGE
         }
+
+        if (isAxisVisible) {
+            g.drawLine(
+                axisP1.x.roundToInt(), axisP1.y.roundToInt(),
+                axisP2.x.roundToInt(), axisP2.y.roundToInt()
+            )
+            g.fillOval(axisP1.x.roundToInt() - 4, axisP1.y.roundToInt() - 4, 8, 8)
+            g.fillOval(axisP2.x.roundToInt() - 4, axisP2.y.roundToInt() - 4, 8, 8)
+        }
     }
 
     public override fun paintComponent(gg: Graphics) {
@@ -106,15 +119,9 @@ class RotatingFigure : JPanel() {
     }
 
     fun showRotationAxis(point1: Vector, point2: Vector) {
-        graphics.color = Color.ORANGE
-        val g = graphics as Graphics2D
-        g.translate(width / 2, height / 2)
-        g.drawLine(
-            point1.x.roundToInt(), point1.y.roundToInt(),
-            point2.x.roundToInt(), point2.y.roundToInt()
-        )
-        g.fillOval(point1.x.roundToInt() - 4, point1.y.roundToInt() - 4, 8, 8)
-        g.fillOval(point2.x.roundToInt() - 4, point2.y.roundToInt() - 4, 8, 8)
+        isAxisVisible = true
+        axisP1 = point1
+        axisP2 = point2
     }
 }
 
