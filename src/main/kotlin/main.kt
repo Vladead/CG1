@@ -110,13 +110,48 @@ class RotatingFigure : JPanel() {
 
 fun main(args: Array<String>) {
     SwingUtilities.invokeLater {
-        val f = JFrame()
-        f.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-        f.title = "Rotating figure"
-        f.isResizable = false
-        f.add(RotatingFigure(), BorderLayout.CENTER)
-        f.pack()
-        f.setLocationRelativeTo(null)
-        f.isVisible = true
+        val frame = JFrame()
+        val inputPanel = JPanel()
+        inputPanel.layout = BoxLayout(inputPanel, BoxLayout.PAGE_AXIS)
+
+        val firstPointX = JTextField()
+        val firstPointY = JTextField()
+        val firstPointZ = JTextField()
+
+        val secondPointX = JTextField()
+        val secondPointY = JTextField()
+        val secondPointZ = JTextField()
+
+        val angle = JTextField()
+        val rotateButton = JButton("Повернуть")
+        val showAxisButton = JButton("Отобразить ось")
+
+
+        inputPanel.add(JLabel("X первой точки"))
+        inputPanel.add(firstPointX)
+        inputPanel.add(JLabel("Y первой точки"))
+        inputPanel.add(firstPointY)
+        inputPanel.add(JLabel("Z первой точки"))
+        inputPanel.add(firstPointZ)
+        inputPanel.add(JLabel("X второй точки"))
+        inputPanel.add(secondPointX)
+        inputPanel.add(JLabel("Y второй точки"))
+        inputPanel.add(secondPointY)
+        inputPanel.add(JLabel("Z второй точки"))
+        inputPanel.add(secondPointZ)
+        inputPanel.add(JLabel("Угол"))
+        inputPanel.add(angle)
+        inputPanel.add(rotateButton)
+        inputPanel.add(showAxisButton)
+
+        frame.add(inputPanel, BorderLayout.NORTH)
+
+        frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        frame.title = "Rotating figure"
+        frame.isResizable = true
+        frame.add(RotatingFigure(), BorderLayout.CENTER)
+        frame.pack()
+        frame.setLocationRelativeTo(null)
+        frame.isVisible = true
     }
 }
