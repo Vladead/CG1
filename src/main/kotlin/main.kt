@@ -4,7 +4,7 @@ import kotlin.math.PI
 import kotlin.math.atan
 import kotlin.math.sqrt
 
-class RotatingCube : JPanel() {
+class RotatingFigure : JPanel() {
     private val nodes = arrayOf(
         Vector(-1.0, -1.0, -1.0),
         Vector(-1.0, 1.0, 1.0),
@@ -114,7 +114,7 @@ fun main(args: Array<String>) {
         f.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         f.title = "Rotating figure"
         f.isResizable = false
-        f.add(RotatingCube(), BorderLayout.CENTER)
+        f.add(RotatingFigure(), BorderLayout.CENTER)
         f.pack()
         f.setLocationRelativeTo(null)
         f.isVisible = true
