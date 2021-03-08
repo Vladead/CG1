@@ -104,16 +104,16 @@ class RotatingFigure : JPanel() {
         g.color = Color.blue
         drawFigure(g)
     }
-}
 
-fun showRotationAxis(point1: Vector, point2: Vector, graphics: Graphics) {
-    graphics.drawLine(
-        point1.x.roundToInt(), point1.y.roundToInt(),
-        point2.x.roundToInt(), point2.y.roundToInt()
-    )
-    graphics.fillOval(point1.x.roundToInt() - 4, point1.y.roundToInt() - 4, 8, 8)
-    graphics.fillOval(point2.x.roundToInt() - 4, point2.y.roundToInt() - 4, 8, 8)
-    graphics.color = Color.ORANGE
+    fun showRotationAxis(point1: Vector, point2: Vector, graphics: Graphics) {
+        graphics.color = Color.ORANGE
+        graphics.drawLine(
+            point1.x.roundToInt(), point1.y.roundToInt(),
+            point2.x.roundToInt(), point2.y.roundToInt()
+        )
+        graphics.fillOval(point1.x.roundToInt() - 4, point1.y.roundToInt() - 4, 8, 8)
+        graphics.fillOval(point2.x.roundToInt() - 4, point2.y.roundToInt() - 4, 8, 8)
+    }
 }
 
 fun main(args: Array<String>) {
@@ -162,7 +162,7 @@ fun main(args: Array<String>) {
         frame.isVisible = true
 
         showAxisButton.addActionListener {
-            showRotationAxis(
+            rotatingFigure.showRotationAxis(
                 Vector(firstPointX.text.toDouble(), firstPointY.text.toDouble(), firstPointZ.text.toDouble()),
                 Vector(secondPointX.text.toDouble(), secondPointY.text.toDouble(), secondPointZ.text.toDouble()),
                 rotatingFigure.graphics
