@@ -46,4 +46,34 @@ object TransformMatrixFabric {
         matrix[4,3] = z
         return matrix
     }
+
+    fun perspectiveZ(z: Double): Matrix {
+        val matrix = Matrix(4, 4)
+        matrix[1,1] = 1.0
+        matrix[2,2] = 1.0
+        matrix[3,3] = 1.0
+        matrix[4,4] = 1.0
+        matrix[3,4] = z
+        return matrix
+    }
+
+    fun perspectiveY(y: Double): Matrix {
+        val matrix = Matrix(4, 4)
+        matrix[1,1] = 1.0
+        matrix[2,2] = 1.0
+        matrix[3,3] = 1.0
+        matrix[4,4] = 1.0
+        matrix[2,4] = y
+        return matrix
+    }
+
+    fun perspectiveX(x: Double): Matrix {
+        val matrix = Matrix(4, 4)
+        matrix[1,1] = 1.0
+        matrix[2,2] = 1.0
+        matrix[3,3] = 1.0
+        matrix[4,4] = 1.0
+        matrix[1,4] = x
+        return matrix
+    }
 }
